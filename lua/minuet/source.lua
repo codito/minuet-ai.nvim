@@ -10,16 +10,7 @@ function M:is_available()
 end
 
 function M.get_trigger_characters()
-    return { '@', '.', '(', '[', ':', ' ' }
-end
-
-function M.get_keyword_pattern()
-    -- NOTE: Don't trigger the completion by any keywords (use a pattern that
-    -- is not likely to be triggered.). only trigger on the given characters.
-    -- This is because candidates returned by LLMs are easily filtered out by
-    -- cmp due to that LLM oftern returns candidates contains the full content
-    -- in current line before the cursor.
-    return '^$'
+    return { '@', '.', '(', '[', ':' }
 end
 
 function M:get_debug_name()
@@ -72,7 +63,7 @@ function M:complete(ctx, callback)
 
             local items = {}
             for _, result in ipairs(data) do
-                result = result:gsub('^%s*', '')
+                result = utils.cmp_process_completion_items(result, ctx.context)
                 table.insert(items, {
                     label = result,
                     documentation = {

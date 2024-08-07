@@ -268,4 +268,21 @@ M.list_dedup = function(list)
     return items_cleaned
 end
 
+function M.cmp_process_completion_items(item, context)
+    Total_Items = Total_Items or {}
+    -- remove leading spaces
+    item = item:gsub('^%s*', '')
+    local items = { before = item }
+    -- get word before cursor
+    local word_before_cursor = context.cursor_before_line:match '[%w_-]+$'
+    items.word = word_before_cursor
+    -- if the item is not prefixed with word_before_cursor then prepend the word with the item
+    if word_before_cursor and not string.find(item, '^' .. word_before_cursor) then
+        item = word_before_cursor .. '' .. item
+    end
+    items.after = item
+    table.insert(Total_Items, 1, items)
+    return item
+end
+
 return M
