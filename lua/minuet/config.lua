@@ -103,6 +103,13 @@ local M = {
     -- guarantee the exact number of completion items specified, as this
     -- parameter serves only as a prompt guideline.
     n_completions = 3,
+    -- Length of non-white context after the cursor to use as stop sequences.
+    -- Disabled by default. Set to a non-zero value to enable. Example: With
+    -- stop_after_cursor_length = 3 and context "def fib(n):\n    |\n\nfib(5)"
+    -- where | is the cursor position, "fib" will be used as a stop sequence in
+    -- the request payload. This setting prevents the LLM from repeating code.
+    -- We recommend setting it to a larger value (e.g., 20) if enabled.
+    stop_after_cursor_length = 0,
 }
 
 M.default_template = {

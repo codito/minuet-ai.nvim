@@ -56,6 +56,26 @@ local function make_request_data()
     return options, request_data
 end
 
+local function add_context_stop_sequence(data, context_after_cursor)
+    local stop = utils.make_context_stop_sequence(context_after_cursor, config.stop_after_cursor_length)
+    if not stop then
+        return data
+    end
+
+    data.generationConfig = data.generationConfig or {}
+    if data.generationConfig.stopSequences then
+        if type(data.generationConfig.stopSequences) == 'string' then
+            data.generationConfig.stopSequences = { data.generationConfig.stopSequences }
+        end
+    else
+        data.generationConfig.stopSequences = {}
+    end
+
+    table.insert(data.generationConfig.stopSequences, stop)
+
+    return data
+end
+
 function M.complete(context_before_cursor, context_after_cursor, callback)
     local options, data = make_request_data()
 
@@ -67,6 +87,10 @@ function M.complete(context_before_cursor, context_after_cursor, callback)
             { text = context },
         },
     })
+
+    if config.stop_after_cursor_length > 0 then
+        data = add_context_stop_sequence(data, context_after_cursor)
+    end
 
     local data_file = utils.make_tmp_file(data)
 

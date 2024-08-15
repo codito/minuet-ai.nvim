@@ -170,6 +170,21 @@ function M.get_context(cmp_context)
     }
 end
 
+function M.make_context_stop_sequence(context, length)
+    if not context then
+        return
+    end
+
+    -- remove leading whitespaces
+    context = context:gsub('^%s+', '')
+
+    if vim.fn.strchars(context) < length then
+        return
+    end
+
+    return vim.fn.strcharpart(context, start, length)
+end
+
 function M.make_chat_llm_shot(context_before_cursor, context_after_cursor)
     local language = M.add_language_comment()
     local tab = M.add_tab_comment()
